@@ -246,6 +246,57 @@ namespace ovrstream_client_csharp
             return null;
         }
 
+        public async Task<string> EncodeImageAsync(string path, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            EncodeImageCommand command = new EncodeImageCommand
+            {
+                Path = path,
+            };
+
+            var response = await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+
+            XmlDocument responseDocument = new XmlDocument();
+            responseDocument.LoadXml(response.Data.Value<string>());
+            XmlElement image = responseDocument.SelectSingleNode("//newblue_ext/image") as XmlElement;
+            if (image != null)
+            {
+                return image.InnerText;
+            }
+
+            return null;
+        }
+
+        public Task<string> GetTitleIconAsync(Title title, int width, int height, CancellationToken cancellationToken)
+        {
+            return GetTitleIconAsync(title.Id, width, height, cancellationToken);
+        }
+
+        public async Task<string> GetTitleIconAsync(string title, int width, int height, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            GetTitleIconCommand command = new GetTitleIconCommand
+            {
+                Title = title,
+                Width = width,
+                Height = height,
+            };
+
+            var response = await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+
+            XmlDocument responseDocument = new XmlDocument();
+            responseDocument.LoadXml(response.Data.Value<string>());
+            XmlElement image = responseDocument.SelectSingleNode("//newblue_ext/image") as XmlElement;
+            if (image != null)
+            {
+                return image.InnerText;
+            }
+
+            return null;
+        }
+
         public async Task<string> RunCommandXml(string xml, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

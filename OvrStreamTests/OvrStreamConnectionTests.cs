@@ -89,6 +89,10 @@ namespace Tests
             Assert.IsNotNull(titles);
             Assert.Greater(titles.Length, 0);
 
+            var imageBase64 = await connection.GetTitleIconAsync(titles[0], 114, 114, CancellationToken.None);
+            Assert.IsNotNull(imageBase64);
+            Assert.Greater(imageBase64.Length, 0);
+
             await connection.DisconnectAsync(CancellationToken.None);
         }
 
@@ -107,15 +111,19 @@ namespace Tests
         }
 
         [Test]
-        public async Task DownloadImage()
+        public async Task DownloadAndEncodeImage()
         {
             OvrStreamConnection connection = new OvrStreamConnection(8023);
             bool succeeded = await connection.ConnectAsync(CancellationToken.None);
             Assert.IsTrue(succeeded);
 
-            var path = await connection.DownloadImageAsync(new Uri("https://www.ovrstream.com/wp-content/themes/understrap-child/images/footer_logo_svgo.svg"), CancellationToken.None);
+            var path = await connection.DownloadImageAsync(new Uri("https://pbs.twimg.com/profile_images/912736926125264896/0MYdjgqN_400x400.jpg"), CancellationToken.None);
             Assert.IsNotNull(path);
             Assert.Greater(path.Length, 0);
+
+            var imageBase64 = await connection.EncodeImageAsync(path, CancellationToken.None);
+            Assert.IsNotNull(imageBase64);
+            Assert.Greater(imageBase64.Length, 0);
 
             await connection.DisconnectAsync(CancellationToken.None);
         }
