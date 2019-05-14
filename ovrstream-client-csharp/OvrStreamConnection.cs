@@ -96,7 +96,7 @@ namespace ovrstream_client_csharp
             XmlDocument responseDocument = new XmlDocument();
             responseDocument.LoadXml(sceneListResponse.Data.Value<string>());
             List<Scene> sceneList = new List<Scene>();
-            foreach(XmlElement sceneElement in responseDocument.SelectNodes("newblue_ext/scenes"))
+            foreach (XmlElement sceneElement in responseDocument.SelectNodes("newblue_ext/scenes"))
             {
                 sceneList.Add(Scene.Parse(sceneElement));
             }
@@ -206,20 +206,10 @@ namespace ovrstream_client_csharp
 
         public Task UpdateVariablesAsync(Title title, IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
         {
-            return UpdateVariablesAsync(title.Id, title.Id, variables, cancellationToken);
+            return UpdateVariablesAsync(title.Id, variables, cancellationToken);
         }
 
-        public Task UpdateVariablesAsync(Title title, string queue, IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
-        {
-            return UpdateVariablesAsync(title.Id, queue, variables, cancellationToken);
-        }
-
-        public Task UpdateVariablesAsync(string title, IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
-        {
-            return UpdateVariablesAsync(title, title, variables, cancellationToken);
-        }
-
-        public async Task UpdateVariablesAsync(string title, string queue, IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
+        public async Task UpdateVariablesAsync(string title, IReadOnlyDictionary<string, string> variables, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -232,6 +222,28 @@ namespace ovrstream_client_csharp
             };
 
             await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+        }
+
+        public async Task<string> DownloadImageAsync(Uri uri, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            DownloadImageCommand command = new DownloadImageCommand
+            {
+                Uri = uri,
+            };
+
+            var response = await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+
+            XmlDocument responseDocument = new XmlDocument();
+            responseDocument.LoadXml(response.Data.Value<string>());
+            XmlElement root = responseDocument.SelectSingleNode("//newblue_ext") as XmlElement;
+            if (root != null && root.HasAttribute("path"))
+            {
+                return root.GetAttribute("path");
+            }
+
+            return null;
         }
 
         public async Task<string> RunCommandXml(string xml, CancellationToken cancellationToken)
