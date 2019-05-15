@@ -65,6 +65,47 @@ namespace Tests
         }
 
         [Test]
+        public async Task OpenPlayout()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(8023);
+            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
+            Assert.IsTrue(succeeded);
+
+            await connection.OpenPlayoutAsync(CancellationToken.None);
+
+            await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+        [Test]
+        public async Task OpenTitleEdit()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(8023);
+            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
+            Assert.IsTrue(succeeded);
+
+            await connection.OpenTitleEditAsync("Basic BRB Screen", CancellationToken.None);
+
+            await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+        [Test]
+        public async Task GetCurrentVideoSettings()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(8023);
+            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
+            Assert.IsTrue(succeeded);
+
+            var settings = await connection.GetCurrentVideoSettingsAsync(CancellationToken.None);
+            Assert.IsNotNull(settings);
+            Assert.AreEqual(1920, settings.Width);
+            Assert.AreEqual(1080, settings.Height);
+            Assert.AreEqual(30, settings.FrameRate);
+            Assert.AreEqual(false, settings.IsInterlaced);
+
+            await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+        [Test]
         public async Task GetScenes()
         {
             OvrStreamConnection connection = new OvrStreamConnection(8023);

@@ -87,6 +87,24 @@ namespace ovrstream_client_csharp
             }
         }
 
+        public async Task OpenPlayoutAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await InvokeMethodAsync("scheduleCommandXml", new object[] { new OpenPlayoutCommand().ToString() }, cancellationToken);
+        }
+
+        public async Task<VideoSettings> GetCurrentVideoSettingsAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var response = await InvokeMethodAsync("scheduleCommandXml", new object[] { new GetCurrentVideoSettingsCommand().ToString() }, cancellationToken);
+
+            XmlDocument responseDocument = new XmlDocument();
+            responseDocument.LoadXml(response.Data.Value<string>());
+            return VideoSettings.Parse(responseDocument.SelectSingleNode("newblue_ext") as XmlElement);
+        }
+
         public async Task<Scene[]> GetScenesAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -199,6 +217,23 @@ namespace ovrstream_client_csharp
                 Action = "animateout+override",
                 Id = title,
                 Queue = queue,
+            };
+
+            await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+        }
+
+        public Task OpenTitleEditAsync(Title title, CancellationToken cancellationToken)
+        {
+            return OpenTitleEditAsync(title.Id, cancellationToken);
+        }
+
+        public async Task OpenTitleEditAsync(string title, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            OpenTitleEditCommand command = new OpenTitleEditCommand
+            {
+                Title = title,
             };
 
             await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
