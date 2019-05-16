@@ -9,27 +9,43 @@ namespace Tests
 {
     public class OvrStreamConnectionTests
     {
+        public const int OvrStreamWebSocketPort = 8023;
+
         [SetUp]
         public void Setup()
         {
         }
 
         [Test]
+        public async Task DisconnectOnly()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+        [Test]
         public async Task ConnectAndDisconnect()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+
+        [Test]
+        public async Task ConnectTwiceInARow()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
+            await connection.ConnectAsync(CancellationToken.None);
         }
 
         [Test]
         public async Task UpdateVariableAndPlay()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             Dictionary<string, string> variables = new Dictionary<string, string>();
             variables.Add("Name", DateTime.Now.ToString());
@@ -43,9 +59,8 @@ namespace Tests
         [Test]
         public async Task UpdateVariableAndShowUpdateHide()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             Dictionary<string, string> variables = new Dictionary<string, string>();
             variables.Add("Twitter_Username", "BEFORE");
@@ -67,9 +82,8 @@ namespace Tests
         [Test]
         public async Task OpenPlayout()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             await connection.OpenPlayoutAsync(CancellationToken.None);
 
@@ -79,9 +93,8 @@ namespace Tests
         [Test]
         public async Task OpenTitleEdit()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             await connection.OpenTitleEditAsync("Basic BRB Screen", CancellationToken.None);
 
@@ -91,9 +104,8 @@ namespace Tests
         [Test]
         public async Task GetCurrentVideoSettings()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             var settings = await connection.GetCurrentVideoSettingsAsync(CancellationToken.None);
             Assert.IsNotNull(settings);
@@ -108,9 +120,8 @@ namespace Tests
         [Test]
         public async Task GetScenes()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             var scenes = await connection.GetScenesAsync(CancellationToken.None);
             Assert.IsNotNull(scenes);
@@ -122,9 +133,8 @@ namespace Tests
         [Test]
         public async Task GetTitles()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             var titles = await connection.GetTitlesAsync(CancellationToken.None);
             Assert.IsNotNull(titles);
@@ -140,9 +150,8 @@ namespace Tests
         [Test]
         public async Task GetScenesWithXml()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             var sceneString = await connection.RunCommandXml("<newblue_ext command='getSceneList'/>", CancellationToken.None);
             Assert.IsNotNull(sceneString);
@@ -154,9 +163,8 @@ namespace Tests
         [Test]
         public async Task DownloadAndEncodeImage()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(8023);
-            bool succeeded = await connection.ConnectAsync(CancellationToken.None);
-            Assert.IsTrue(succeeded);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            await connection.ConnectAsync(CancellationToken.None);
 
             var path = await connection.DownloadImageAsync(new Uri("https://pbs.twimg.com/profile_images/912736926125264896/0MYdjgqN_400x400.jpg"), CancellationToken.None);
             Assert.IsNotNull(path);

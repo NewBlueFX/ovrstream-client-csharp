@@ -1,32 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
-namespace ovrstream_client_csharp.Messages
+namespace ovrstream_client_csharp
 {
-    public enum PlayStatus
-    {
-        Off,
-        Rendering,
-        Paused,
-    }
-
+    /// <summary>
+    /// This class represents a title within an OvrStream <see cref="Scene"/>
+    /// </summary>
     public class Title
     {
+        /// <summary>
+        /// The unique identifier of the title.
+        /// </summary>
         public string Id { get; private set; }
+
+        /// <summary>
+        /// The name of the title.
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// The function of the title.
+        /// TODO: Get more details on this property.
+        /// </summary>
         public string Function { get; private set; }
+
+        /// <summary>
+        /// A flag to indicate if this title is currently rendering.
+        /// </summary>
         public bool IsRendering { get; private set; }
+
+        /// <summary>
+        /// A flag to indicate of this title is currently playing.
+        /// </summary>
         public bool IsPlaying { get; private set; }
+
+        /// <summary>
+        /// The current play status of this title.
+        /// </summary>
         public PlayStatus Status { get; private set; }
+
+        /// <summary>
+        /// The progress of the this title.
+        /// TODO: Get more details on this property.
+        /// </summary>
         public long PlayProgress { get; private set; }
+
+        /// <summary>
+        /// The cursor of the this title.
+        /// TODO: Get more details on this property.
+        /// </summary>
         public long PlayCursor { get; private set; }
 
+        /// <summary>
+        /// This is an array of all the available variables for this title.
+        /// </summary>
         public Variable[] Variables { get; private set; }
 
-        // TODO:
-        // public string Input { get; private set; }
+        /// <summary>
+        /// The current input for this title.
+        /// </summary>
+        public string Input { get; private set; }
 
         internal Title()
         {
@@ -44,6 +78,7 @@ namespace ovrstream_client_csharp.Messages
                 Status = (PlayStatus)Enum.Parse(typeof(PlayStatus), element.GetAttribute("playStatus"), true),
                 PlayProgress = XmlConvert.ToInt64(element.GetAttribute("playProgress")),
                 PlayCursor = XmlConvert.ToInt64(element.GetAttribute("playCursor")),
+                Input = element.GetAttribute("input"),
             };
 
             List<Variable> variables = new List<Variable>();
@@ -55,33 +90,6 @@ namespace ovrstream_client_csharp.Messages
             title.Variables = variables.ToArray();
 
             return title;
-        }
-    }
-
-    public class Variable
-    {
-        public string Name { get; private set; }
-        public string Value { get; private set; }
-        public string Type { get; private set; }
-        public bool IsDynamic { get; private set; }
-        public string Group { get; private set; }
-        public string Field { get; private set; }
-
-        internal Variable()
-        {
-        }
-
-        internal static Variable Parse(XmlElement element)
-        {
-            return new Variable
-            {
-                Name = element.GetAttribute("variable"),
-                Value = element.GetAttribute("values"),
-                Type = element.GetAttribute("type"),
-                IsDynamic = XmlConvert.ToBoolean(element.GetAttribute("dynamic")),
-                Group = element.HasAttribute("group") ? element.GetAttribute("group") : string.Empty,
-                Field = element.HasAttribute("field") ? element.GetAttribute("field") : string.Empty,
-            };
         }
     }
 }
