@@ -9,7 +9,7 @@ namespace Tests
 {
     public class OvrStreamConnectionTests
     {
-        public const int OvrStreamWebSocketPort = 8023;
+        public readonly Uri OvrStreamWebSocketAddress = new Uri("ws://127.0.0.1:8023");
 
         [SetUp]
         public void Setup()
@@ -19,24 +19,22 @@ namespace Tests
         [Test]
         public async Task DisconnectOnly()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.DisconnectAsync(CancellationToken.None);
         }
 
         [Test]
         public async Task ConnectAndDisconnect()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
-
             await connection.DisconnectAsync(CancellationToken.None);
         }
-
 
         [Test]
         public async Task ConnectTwiceInARow()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
             await connection.ConnectAsync(CancellationToken.None);
         }
@@ -44,7 +42,7 @@ namespace Tests
         [Test]
         public async Task UpdateVariableAndPlay()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             Dictionary<string, string> variables = new Dictionary<string, string>();
@@ -59,7 +57,7 @@ namespace Tests
         [Test]
         public async Task UpdateVariableAndShowUpdateHide()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             Dictionary<string, string> variables = new Dictionary<string, string>();
@@ -82,7 +80,7 @@ namespace Tests
         [Test]
         public async Task OpenPlayout()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             await connection.OpenPlayoutAsync(CancellationToken.None);
@@ -93,7 +91,7 @@ namespace Tests
         [Test]
         public async Task OpenTitleEdit()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             await connection.OpenTitleEditAsync("Basic BRB Screen", CancellationToken.None);
@@ -104,7 +102,7 @@ namespace Tests
         [Test]
         public async Task GetCurrentVideoSettings()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             var settings = await connection.GetCurrentVideoSettingsAsync(CancellationToken.None);
@@ -120,7 +118,7 @@ namespace Tests
         [Test]
         public async Task GetScenes()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             var scenes = await connection.GetScenesAsync(CancellationToken.None);
@@ -133,7 +131,7 @@ namespace Tests
         [Test]
         public async Task GetTitles()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             var titles = await connection.GetTitlesAsync(CancellationToken.None);
@@ -150,7 +148,7 @@ namespace Tests
         [Test]
         public async Task GetScenesWithXml()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             var sceneString = await connection.RunCommandXml("<newblue_ext command='getSceneList'/>", CancellationToken.None);
@@ -163,7 +161,7 @@ namespace Tests
         [Test]
         public async Task DownloadAndEncodeImage()
         {
-            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketPort);
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
             await connection.ConnectAsync(CancellationToken.None);
 
             var path = await connection.DownloadImageAsync(new Uri("https://pbs.twimg.com/profile_images/912736926125264896/0MYdjgqN_400x400.jpg"), CancellationToken.None);

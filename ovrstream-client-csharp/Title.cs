@@ -26,25 +26,19 @@ namespace ovrstream_client_csharp
         public string Function { get; private set; }
 
         /// <summary>
-        /// A flag to indicate if this title is currently rendering.
+        /// The percentage of the current render state.
         /// </summary>
-        public bool IsRendering { get; private set; }
+        public float RenderProgress { get; private set; }
 
         /// <summary>
-        /// A flag to indicate of this title is currently playing.
+        /// The percentage of the current play state.
         /// </summary>
-        public bool IsPlaying { get; private set; }
+        public float PlayProgress { get; private set; }
 
         /// <summary>
         /// The current play status of this title.
         /// </summary>
         public PlayStatus Status { get; private set; }
-
-        /// <summary>
-        /// The progress of the this title.
-        /// TODO: Get more details on this property.
-        /// </summary>
-        public long PlayProgress { get; private set; }
 
         /// <summary>
         /// The cursor of the this title.
@@ -73,10 +67,9 @@ namespace ovrstream_client_csharp
                 Id = element.GetAttribute("id"),
                 Name = element.GetAttribute("name"),
                 Function = element.GetAttribute("function"),
-                IsRendering = XmlConvert.ToBoolean(element.GetAttribute("renderProgress")),
-                IsPlaying = XmlConvert.ToBoolean(element.GetAttribute("playProgress")),
+                RenderProgress = XmlConvert.ToSingle(element.GetAttribute("renderProgress")),
+                PlayProgress = XmlConvert.ToSingle(element.GetAttribute("playProgress")),
                 Status = (PlayStatus)Enum.Parse(typeof(PlayStatus), element.GetAttribute("playStatus"), true),
-                PlayProgress = XmlConvert.ToInt64(element.GetAttribute("playProgress")),
                 PlayCursor = XmlConvert.ToInt64(element.GetAttribute("playCursor")),
                 Input = element.GetAttribute("input"),
             };

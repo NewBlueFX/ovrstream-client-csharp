@@ -23,18 +23,20 @@ namespace ovrstream_client_csharp
         private readonly Dictionary<long, OvrStreamResponse> m_Responses = new Dictionary<long, OvrStreamResponse>();
         private readonly Dictionary<string, Dictionary<string, int>> m_ObjectMethods = new Dictionary<string, Dictionary<string, int>>(StringComparer.InvariantCultureIgnoreCase);
 
+        public event EventHandler<EventArgs> OnDisconnected;
+
         /// <summary>
-        /// The port used to connect to the OvrStream application
+        /// The adddess used to connect to the OvrStream application
         /// </summary>
-        public int Port { get; private set; }
+        public Uri Address { get; private set; }
 
         /// <summary>
         /// This constructor is used to create a new OvrStream connection.
         /// </summary>
-        /// <param name="port">The websocket port to use.  Generally, this is 8023.</param>
-        public OvrStreamConnection(int port)
+        /// <param name="address">The websocket address to use.  Generally, this is ws://127.0.0.1:8023.</param>
+        public OvrStreamConnection(Uri address)
         {
-            this.Port = port;
+            this.Address = address;
         }
 
         /// <summary>
@@ -51,7 +53,7 @@ namespace ovrstream_client_csharp
 
             // Open the web socket
             m_WebSocket = new ClientWebSocket();
-            await m_WebSocket.ConnectAsync(new Uri($"ws://127.0.0.1:{Port}"), cancellationToken);
+            await m_WebSocket.ConnectAsync(Address, cancellationToken);
 
             // Start the background thread to read the incoming data
             var _ = ReadAsync();
@@ -105,6 +107,8 @@ namespace ovrstream_client_csharp
                 }
                 catch { }
                 m_WebSocket = null;
+
+                await Task.Run(() => { OnDisconnected?.Invoke(this, null); });
             }
         }
 
@@ -524,7 +528,7 @@ namespace ovrstream_client_csharp
                 ArraySegment<byte> segment = new ArraySegment<byte>(buffer);
                 StringBuilder json = new StringBuilder(BufferSize);
 
-                while (m_ReadTokenSource != null && !m_ReadTokenSource.IsCancellationRequested)
+                while (m_WebSocket.State == WebSocketState.Open && !m_ReadTokenSource.IsCancellationRequested)
                 {
                     // Read
                     var result = await m_WebSocket.ReceiveAsync(segment, m_ReadTokenSource.Token);
@@ -551,6 +555,8 @@ namespace ovrstream_client_csharp
 
             m_ReadTokenSource?.Dispose();
             m_ReadTokenSource = null;
+
+            await this.DisconnectAsync(CancellationToken.None);
         }
 
         private void HandlePacket(string json)
@@ -563,7 +569,6 @@ namespace ovrstream_client_csharp
             else
             {
                 // TODO: Handle not id message
-                throw new NotImplementedException("Message received that has no Id, this is not a response.");
             }
         }
 

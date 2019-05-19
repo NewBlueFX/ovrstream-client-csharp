@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>ovrstream_client_csharp</RootNamespace>
-    <Version>0.1.0.0</Version>
+    <Version>0.0.1.2</Version>
     <Product>OvrStream Client - C#</Product>
     <Company>NewBlueFX</Company>
     <Authors>OvrStream</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageTags>Streaming OvrStream NewBlueFX</PackageTags>
     <RepositoryUrl>https://github.com/NewBlueFX/ovrstream-client-csharp</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/NewBlueFX/ovrstream-client-csharp</PackageProjectUrl>
+    <PackageProjectUrl>https://www.ovrstream.com/</PackageProjectUrl>
     <Description>A C# API used to interact with and control OvrStream from any .NET application.</Description>
     <Copyright>Copyright © NewBlueFx - 2019</Copyright>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
