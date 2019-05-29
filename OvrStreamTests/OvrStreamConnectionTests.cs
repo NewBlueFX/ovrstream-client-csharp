@@ -2,6 +2,7 @@ using NUnit.Framework;
 using ovrstream_client_csharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -73,6 +74,26 @@ namespace Tests
 
             await Task.Delay(4000);
             await connection.HideTitleAsync("Basic BRB Screen", "TestQueue", CancellationToken.None);
+
+            await connection.DisconnectAsync(CancellationToken.None);
+        }
+
+        [Test]
+        public async Task DeactivateAndActivateTitle()
+        {
+            OvrStreamConnection connection = new OvrStreamConnection(OvrStreamWebSocketAddress);
+            await connection.ConnectAsync(CancellationToken.None);
+
+            await connection.DeactivateTitleAsync("Basic BRB Screen", CancellationToken.None);
+            await Task.Delay(2000);
+            await connection.ActivateTitleAsync("Basic BRB Screen", CancellationToken.None);
+            await Task.Delay(1000);
+
+            var titles = await connection.GetTitlesAsync(CancellationToken.None);
+            var title = titles.Single(t => t.Name.Equals("Basic BRB Screen", StringComparison.InvariantCultureIgnoreCase));
+            await connection.DeactivateTitleAsync(title, CancellationToken.None);
+            await Task.Delay(2000);
+            await connection.ActivateTitleAsync(title, CancellationToken.None);
 
             await connection.DisconnectAsync(CancellationToken.None);
         }

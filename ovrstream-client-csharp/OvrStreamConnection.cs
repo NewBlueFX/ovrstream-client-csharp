@@ -208,12 +208,12 @@ namespace ovrstream_client_csharp
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var titleListResponse = await InvokeMethodAsync("scheduleCommandXml", new object[] { new GetTitleControlInfoCommand().ToString() }, cancellationToken);
+            var titleListResponse = await InvokeMethodAsync("scheduleCommandXml", new object[] { new ReadProjectCommand().ToString() }, cancellationToken);
 
             XmlDocument responseDocument = new XmlDocument();
             responseDocument.LoadXml(titleListResponse.Data.Value<string>());
             List<Title> titleList = new List<Title>();
-            foreach (XmlElement titleElement in responseDocument.SelectNodes("newblue_ext/title"))
+            foreach (XmlElement titleElement in responseDocument.SelectNodes("newblue_ext/project/title"))
             {
                 titleList.Add(Title.Parse(titleElement));
             }
@@ -318,6 +318,62 @@ namespace ovrstream_client_csharp
                 Action = "animateout+override",
                 Id = titleId,
                 Queue = queue,
+            };
+
+            await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+        }
+
+        /// <summary>
+        /// This method will tell OvrStream to activate the input for the title provided.
+        /// </summary>
+        /// <param name="title">The <see cref="Title"/> to hide.</param>
+        /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
+        public Task ActivateTitleAsync(Title title, CancellationToken cancellationToken)
+        {
+            return ActivateTitleAsync(title.Id, cancellationToken);
+        }
+
+        /// <summary>
+        /// This method will tell OvrStream to activate the input for the title provided.
+        /// </summary>
+        /// <param name="titleId">The ID <see cref="Title"/> to hide.</param>
+        /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
+        public async Task ActivateTitleAsync(string titleId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            MacroCommand command = new MacroCommand
+            {
+                Event = "activate",
+                Title = $"name:{titleId}",
+            };
+
+            await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);
+        }
+
+        /// <summary>
+        /// This method will tell OvrStream to deactivate the input for the title provided.
+        /// </summary>
+        /// <param name="title">The <see cref="Title"/> to hide.</param>
+        /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
+        public Task DeactivateTitleAsync(Title title, CancellationToken cancellationToken)
+        {
+            return DeactivateTitleAsync(title.Id, cancellationToken);
+        }
+
+        /// <summary>
+        /// This method will tell OvrStream to deactivate the input for the title provided.
+        /// </summary>
+        /// <param name="titleId">The ID <see cref="Title"/> to hide.</param>
+        /// <param name="cancellationToken">A cancellation token used to propagate notification that the operation should be canceled.</param>
+        public async Task DeactivateTitleAsync(string titleId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            MacroCommand command = new MacroCommand
+            {
+                Event = "deactivate",
+                Title = $"name:{titleId}",
             };
 
             await InvokeMethodAsync("scheduleCommandXml", new object[] { command.ToString() }, cancellationToken);

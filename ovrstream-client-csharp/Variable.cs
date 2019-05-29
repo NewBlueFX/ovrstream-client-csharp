@@ -17,26 +17,6 @@ namespace ovrstream_client_csharp
         /// </summary>
         public string Value { get; private set; }
 
-        /// <summary>
-        /// The type of variable.
-        /// </summary>
-        public string Type { get; private set; }
-
-        /// <summary>
-        /// A flag to indicate if this variable is dynamic.
-        /// </summary>
-        public bool IsDynamic { get; private set; }
-
-        /// <summary>
-        /// The variable's group.
-        /// </summary>
-        public string Group { get; private set; }
-
-        /// <summary>
-        /// TODO: Get more info on this property.
-        /// </summary>
-        public string Field { get; private set; }
-
         internal Variable()
         {
         }
@@ -45,12 +25,8 @@ namespace ovrstream_client_csharp
         {
             return new Variable
             {
-                Name = element.GetAttribute("variable"),
-                Value = element.GetAttribute("values"),
-                Type = element.GetAttribute("type"),
-                IsDynamic = XmlConvert.ToBoolean(element.GetAttribute("dynamic")),
-                Group = element.HasAttribute("group") ? element.GetAttribute("group") : string.Empty,
-                Field = element.HasAttribute("field") ? element.GetAttribute("field") : string.Empty,
+                Name = element.GetAttribute("name"),
+                Value = element.GetAttribute("value"),
             };
         }
     }
